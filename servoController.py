@@ -13,6 +13,12 @@ delay_time = 0.2
 def handle_numbers(numbers):
 	result = {}
 	
+	try:
+		int(numbers)
+	except ValueError:
+		result = {"result" : "invalid input"}
+		return jsonify(result)
+	
 	if aiming.is_busy():
 		result = {"result" : "busy"}
 		
