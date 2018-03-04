@@ -19,6 +19,10 @@ def handle_numbers(numbers):
 		result = {"result" : "invalid input"}
 		return jsonify(result)
 	
+	if not check_valid_numbers(numbers):
+		result = {"result" : "invalid set of numbers"}
+		return jsonify(result)
+	
 	if aiming.is_busy():
 		result = {"result" : "busy"}
 		
@@ -27,6 +31,17 @@ def handle_numbers(numbers):
 		result = {"result" : "success"}
 	
 	return jsonify(result)
+	
+def check_valid_numbers(numbers):
+	counter = 0
+	for i in numbers:
+		if int(i) == 8:
+			counter += 1
+	
+	if counter >=3:
+		return False
+	else:
+		return True
 	
 		
 if __name__ == "__main__":

@@ -32,20 +32,7 @@ class AimingController:
 		self.laser = l.LaserController()
 		self.laser_port = 11
 	
-	def check_input_numbers(self,input_numbers):
-		counter = 0
-		for i in input_numbers:
-			if int(i) == 8:
-				counter += 1
-		
-		if counter >=3:
-			return False
-		else:
-			return True
-	
 	def aim_blocks(self, input_numbers):
-		if not self.check_input_numbers(input_numbers):
-			return			
 		
 		self.set_busy(True)
 		self.laser.export(self.laser_port)
