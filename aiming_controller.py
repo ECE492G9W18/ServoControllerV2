@@ -1,5 +1,6 @@
 from threading import Thread, Lock
 from time import sleep
+import laser_controller as l
 import os
 
 class AimingController:
@@ -26,25 +27,24 @@ class AimingController:
 			self.max_Y, self.max_Y, self.max_Y, 
 			self.mid_Y, self.mid_Y, self.mid_Y, 
 			self.min_Y, self.min_Y, self.min_Y]
+			
+		self.laser = l.LaserController()
 	
 	def aim_blocks(self, numbers):
 		self.set_busy(True)
 		
-		try:
-			os.system("echo 11 > /sys/class/gpio/export")
-			os.system("echo out > /sys/class/gpio/gpio11/direction")
-		except:
-			pass
+		self.laser.export()
 		
-		os.system("echo 1 > /sys/class/gpio/gpio11/value")
+		self.laser.turn_on()
 		
 		for i in numbers:
 			print(i)
 			self.move_servo(int(i))
 			sleep(self.delay_time)
 			
-		os.system("echo 0 > /sys/class/gpio/gpio11/value")
-		os.system("echo 11 > /sys/class/gpio/unexport")
+		self.laser.turn_off()
+		self.laser.unexport()
+		
 		self.set_busy(False)
 		
 	def start_aiming(self, numbers):
