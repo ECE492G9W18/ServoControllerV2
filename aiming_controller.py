@@ -2,6 +2,7 @@ from threading import Thread, Lock
 from time import sleep
 import laser_controller as l
 import os
+import operator
 
 class AimingController:
 	def __init__(self):
@@ -16,7 +17,7 @@ class AimingController:
 		self.busy = False
 		self.busy_mutex = Lock()
 		
-		self.delay_time = 0.2
+		self.delay_time = 0.1
 		
 		self.horizontal_dirs = [
 			self.min_X, self.mid_X, self.max_X,  
@@ -29,17 +30,35 @@ class AimingController:
 			self.min_Y, self.min_Y, self.min_Y]
 			
 		self.laser = l.LaserController()
+		self.laser_port = 11
 	
-	def aim_blocks(self, numbers):
+	def check_input_numbers(self,input_numbers):
+		counter = 0
+		for i in input_numbers:
+			if int(i) == 8:
+				counter += 1
+		
+		if counter >=3:
+			return False
+		else:
+			return True
+	
+	def aim_blocks(self, input_numbers):
+		if not self.check_input_numbers(input_numbers):
+			return			
+		
 		self.set_busy(True)
-		self.laser.export()
+		self.laser.export(self.laser_port)
 		self.laser.turn_on()
 		
 		seen = set()
 		
-		for i in numbers:
+		mapped_numbers = self.map_numbers(input_numbers)
+		print(mapped_numbers)
+		
+		for i in mapped_numbers:
 			if int(i) not in seen:
-				print(i)
+				# print(i)
 				seen.add(int(i))
 				self.move_servo(int(i))
 				sleep(self.delay_time)
@@ -55,15 +74,25 @@ class AimingController:
 				i += 1
 							
 		self.laser.turn_off()
-		self.laser.unexport()
-		
+		self.laser.unexport(self.laser_port)
+		sleep(5)
 		self.set_busy(False)
 		
+	def map_numbers(self, input_numbers):
+		mapping = {}
+		
+		i = 1
+		for curr in input_numbers:
+			mapping[i] = int(curr)
+			i += 1
+		
+		ordered_mapping = sorted(mapping.items(), key=operator.itemgetter(1))
+		
+		return [x[0] for x in ordered_mapping]
+		
 	def start_aiming(self, numbers):
-		print("starting aim")
 		thread = Thread(target = self.aim_blocks, args=(numbers, ))
 		thread.start()
-		print("thread finished")
 				
 	def move_servo(self, block):
 		with open("/dev/servoblaster", "w+") as fd:
