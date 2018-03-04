@@ -32,16 +32,28 @@ class AimingController:
 	
 	def aim_blocks(self, numbers):
 		self.set_busy(True)
-		
 		self.laser.export()
-		
 		self.laser.turn_on()
 		
+		seen = set()
+		
 		for i in numbers:
-			print(i)
-			self.move_servo(int(i))
-			sleep(self.delay_time)
-			
+			if int(i) not in seen:
+				print(i)
+				seen.add(int(i))
+				self.move_servo(int(i))
+				sleep(self.delay_time)
+				
+		if len(seen) != 9:
+			i = 1
+			while (i < 10):
+				if i not in seen:
+					print(i)
+					seen.add(i)
+					self.move_servo(int(i))
+					sleep(self.delay_time)
+				i += 1
+							
 		self.laser.turn_off()
 		self.laser.unexport()
 		
