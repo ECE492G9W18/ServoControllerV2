@@ -1,5 +1,6 @@
 from threading import Thread, Lock
 from time import sleep
+import os
 
 class AimingController:
 	def __init__(self):
@@ -28,12 +29,24 @@ class AimingController:
 	
 	def aim_blocks(self, numbers):
 		self.set_busy(True)
+		
+		try:
+			os.system("echo 11 > /sys/class/gpio/export")
+			os.system("echo out > /sys/class/gpio/gpio11/direction")
+		except:
+			pass
+		
+		os.system("echo 1 > /sys/class/gpio/gpio11/value")
+		
 		for i in numbers:
 			print(i)
 			self.move_servo(int(i))
 			sleep(self.delay_time)
-		self.set_busy(False)
 			
+		os.system("echo 0 > /sys/class/gpio/gpio11/value")
+		os.system("echo 11 > /sys/class/gpio/unexport")
+		self.set_busy(False)
+		
 	def start_aiming(self, numbers):
 		print("starting aim")
 		thread = Thread(target = self.aim_blocks, args=(numbers, ))
