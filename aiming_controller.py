@@ -43,33 +43,19 @@ class AimingController:
 		self.laser.export(self.laser_port)
 		self.laser.turn_on()
 		
-		seen = set()
-		
 		mapped_numbers = self.map_numbers(input_numbers)
 		print(mapped_numbers)
 		
 		for i in mapped_numbers:
-			if int(i) not in seen:
-				# print(i)
-				seen.add(int(i))
-				self.move_servo(int(i))
+			# print(i)
+			self.move_servo(int(i))
 
-				sleep(0.1)
-				self.laser.turn_on()				
-				sleep(0.3)
-				
-				self.laser.turn_off()
-				self.move_servo(len(self.horizontal_dirs))
-				
-				
-		if len(seen) != 9:
-			i = 1
-			while (i < 10):
-				if i not in seen:
-					print(i)
-					seen.add(i)
-					self.move_servo(int(i))
-				i += 1
+			sleep(0.1)
+			self.laser.turn_on()				
+			sleep(0.3)
+			
+			self.laser.turn_off()
+			self.move_servo(len(self.horizontal_dirs))
 							
 		self.laser.turn_off()
 		self.laser.unexport(self.laser_port)
