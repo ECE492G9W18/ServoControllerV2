@@ -6,28 +6,33 @@ import operator
 
 class AimingController:
 	def __init__(self):
-		self.min_X = 150
+		self.min_X = 138
 		self.mid_X = 120
-		self.max_X = 100
+		self.max_X = 110
 
-		self.min_Y = 90
-		self.mid_Y = 110
-		self.max_Y = 130
+		self.min_Y = 72
+		self.mid_Y = 82
+		self.max_Y = 88
+		
+		self.calib_X = 120
+		self.calib_Y = 100
 		
 		self.busy = False
 		self.busy_mutex = Lock()
 		
-		self.delay_time = 0.1
+		self.delay_time = 0.8
 		
 		self.horizontal_dirs = [
 			self.min_X, self.mid_X, self.max_X,  
 			self.min_X, self.mid_X, self.max_X, 
-			self.min_X, self.mid_X, self.max_X]
+			self.min_X, self.mid_X, self.max_X,
+			self.calib_X]
 		
 		self.vertical_dirs = [
 			self.max_Y, self.max_Y, self.max_Y, 
 			self.mid_Y, self.mid_Y, self.mid_Y, 
-			self.min_Y, self.min_Y, self.min_Y]
+			self.min_Y, self.min_Y, self.min_Y,
+			self.calib_Y]
 			
 		self.laser = l.LaserController()
 		self.laser_port = 11
@@ -48,7 +53,14 @@ class AimingController:
 				# print(i)
 				seen.add(int(i))
 				self.move_servo(int(i))
-				sleep(self.delay_time)
+
+				sleep(0.1)
+				self.laser.turn_on()				
+				sleep(0.3)
+				
+				self.laser.turn_off()
+				self.move_servo(len(self.horizontal_dirs))
+				
 				
 		if len(seen) != 9:
 			i = 1
@@ -57,7 +69,6 @@ class AimingController:
 					print(i)
 					seen.add(i)
 					self.move_servo(int(i))
-					sleep(self.delay_time)
 				i += 1
 							
 		self.laser.turn_off()
@@ -85,7 +96,7 @@ class AimingController:
 		with open("/dev/servoblaster", "w+") as fd:
 			fd.write("0=%i\n" % self.horizontal_dirs[block-1])
 			fd.write("1=%i\n" % self.vertical_dirs[block-1])
-			
+
 	def is_busy(self):
 		self.busy_mutex.acquire()
 		current_status = self.busy
