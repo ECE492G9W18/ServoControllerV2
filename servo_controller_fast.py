@@ -5,9 +5,7 @@ from threading import Thread
 import aiming_controller as ac
 import os
 app = Flask(__name__)
-aiming = ac.AimingController()
-
-delay_time = 0.2
+aiming = ac.AimingController(0.1, 0.2)
 
 @app.route("/<numbers>", methods=["POST"])
 def handle_numbers(numbers):

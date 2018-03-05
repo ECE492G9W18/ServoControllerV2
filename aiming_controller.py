@@ -5,7 +5,7 @@ import os
 import operator
 
 class AimingController:
-	def __init__(self):
+	def __init__(self, ldelay, hdelay):
 		self.min_X = 138
 		self.mid_X = 120
 		self.max_X = 110
@@ -20,7 +20,8 @@ class AimingController:
 		self.busy = False
 		self.busy_mutex = Lock()
 		
-		self.delay_time = 0.8
+		self.ldelay = ldelay
+		self.hdelay = hdelay
 		
 		self.horizontal_dirs = [
 			self.min_X, self.mid_X, self.max_X,  
@@ -50,9 +51,9 @@ class AimingController:
 			# print(i)
 			self.move_servo(int(i))
 
-			sleep(0.1)
+			sleep(self.ldelay)
 			self.laser.turn_on()				
-			sleep(0.3)
+			sleep(self.hdelay)
 			
 			self.laser.turn_off()
 			self.move_servo(len(self.horizontal_dirs))
