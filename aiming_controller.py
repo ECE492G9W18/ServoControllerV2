@@ -6,16 +6,19 @@ import operator
 
 class AimingController:
 	def __init__(self, ldelay, hdelay):
-		self.min_X = 138
-		self.mid_X = 120
-		self.max_X = 110
+                #X = 69, 72, 77 (B - T)
+                #Y = 132, 128, 122 (L-R)
 
-		self.min_Y = 72
-		self.mid_Y = 82
-		self.max_Y = 88
+		self.min_X = 132
+		self.mid_X = 128
+		self.max_X = 122
 		
-		self.calib_X = 120
-		self.calib_Y = 100
+		self.min_Y = 69
+		self.mid_Y = 72
+		self.max_Y = 77
+		
+		self.calib_X = 128
+		self.calib_Y = 90
 		
 		self.busy = False
 		self.busy_mutex = Lock()
