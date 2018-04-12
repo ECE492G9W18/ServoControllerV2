@@ -9,13 +9,13 @@ class AimingController:
                 #X = 69, 72, 77 (B - T)
                 #Y = 132, 128, 122 (L-R)
 
-		self.min_X = 132
+		self.min_X = 133
 		self.mid_X = 128
 		self.max_X = 122
 		
-		self.min_Y = 69
+		self.min_Y = 68
 		self.mid_Y = 72
-		self.max_Y = 77
+		self.max_Y = 75
 		
 		self.calib_X = 128
 		self.calib_Y = 90
@@ -30,13 +30,13 @@ class AimingController:
 			self.min_X, self.mid_X, self.max_X,  
 			self.min_X, self.mid_X, self.max_X, 
 			self.min_X, self.mid_X, self.max_X,
-			self.calib_X]
+			128]
 		
 		self.vertical_dirs = [
 			self.max_Y, self.max_Y, self.max_Y, 
 			self.mid_Y, self.mid_Y, self.mid_Y, 
 			self.min_Y, self.min_Y, self.min_Y,
-			self.calib_Y]
+			90]
 			
 		self.laser = l.LaserController()
 		self.laser_port = 11
@@ -52,14 +52,15 @@ class AimingController:
 		
 		for i in mapped_numbers:
 			# print(i)
+			sleep(self.ldelay/2)
 			self.move_servo(int(i))
-
-			sleep(self.ldelay)
+			sleep(self.ldelay/2)
+			
 			self.laser.turn_on()				
 			sleep(self.hdelay)
 			
 			self.laser.turn_off()
-			self.move_servo(len(self.horizontal_dirs))
+			self.move_servo(10)
 							
 		self.laser.turn_off()
 		self.laser.unexport(self.laser_port)
